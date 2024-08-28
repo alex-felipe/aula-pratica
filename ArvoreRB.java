@@ -1,19 +1,16 @@
 public class ArvoreRB {
-	//cores
-    private final Cor VERMELHO = Cor.RED;
-    private final Cor PRETO = Cor.BLACK;
-    
-    //nil È um nÛ vazio
-    static final RBNo nil = new RBNo(-1); 
-    
-    //raiz da ·rvore
+    // Cores
+    private static final Cor VERMELHO = Cor.RED;
+    private static final Cor PRETO = Cor.BLACK;
+
+    // nil √© um n√≥ vazio
+    static final RBNo nil = new RBNo(-1);
+
+    // raiz da √°rvore
     private RBNo raiz = nil;
-    
-    
-    
-    
+
     public RBNo buscar(int key) {
-    	return buscar(new RBNo(key), raiz);
+        return buscar(new RBNo(key), raiz);
     }
 
     private RBNo buscar(RBNo no, RBNo no2) {
@@ -34,99 +31,59 @@ public class ArvoreRB {
         }
         return null;
     }
-    
+
     public void inserir(int key) {
-    	inserir( new RBNo(key, nil) );
+        inserir(new RBNo(key, nil));
     }
 
     private void inserir(RBNo no) {
-    	
-    	RBNo temp = raiz;
-        //vazia? (Caso 01)
-    	if (raiz == nil) {
+        RBNo temp = raiz;
+        // √Årvore vazia (Caso 01)
+        if (raiz == nil) {
             raiz = no;
             no.cor = PRETO;
             no.pai = nil;
-        
-    	} else {
-    		//inserindo um no vermelho
+        } else {
+            // Inserindo um n√≥ vermelho
             no.cor = VERMELHO;
-            
-            //poderia ser recursivo tambÈm
+
+            // Poderia ser recursivo tamb√©m
             while (true) {
-            	
-            	//operacao igual ‡ ABB
+                // Opera√ß√£o igual √† ABB
                 if (no.valor < temp.valor) {
-                	//achei um local
+                    // Achei um local
                     if (temp.esquerdo == nil) {
                         temp.esquerdo = no;
                         no.pai = temp;
                         break;
-                    //proximo...
                     } else {
                         temp = temp.esquerdo;
                     }
-                    
-                } else if (no.valor >= temp.valor) {
-                    //achei um local
-                	if (temp.direito == nil) {
+                } else {
+                    // Achei um local
+                    if (temp.direito == nil) {
                         temp.direito = no;
                         no.pai = temp;
                         break;
-                    //proximo
                     } else {
                         temp = temp.direito;
                     }
                 }
             }
-            
-            //caso ocorra alguma anomalia
+
+            // Caso ocorra alguma anomalia
             ajustarArvore(no);
         }
     }
 
     private void ajustarArvore(RBNo no) {
-    	
-    	//se um nÛ pai for vermelho de no inserido
         while (no.pai.cor == VERMELHO) {
-        	
-        	RBNo tio = nil;
-        	
-        	//pai È um filho esquerdo?
+            RBNo tio;
+
             if (no.pai == no.pai.pai.esquerdo) {
-            	//pega o tio
                 tio = no.pai.pai.direito;
-                
-                //Caso 02
-                if (tio != nil && tio.cor == VERMELHO) {
-                    no.pai.cor = PRETO; //p
-                    tio.cor = PRETO; //t
-                    no.pai.pai.cor = VERMELHO; //a
-                    no = no.pai.pai; 
-                    continue;
-                } 
-                
-                //nÛ È um filho ‡ direita (interno)?
-                if (no == no.pai.direito) {
-                    
-                	//se precisar de rotacao dupla
-                    no = no.pai;
-                    rotateLL(no);
-                } 
-                
-                
-                no.pai.cor = PRETO;
-                no.pai.pai.cor = VERMELHO;
-               
-                //n„o È um nÛ ‡ direita (externo)
-                //executa somente essa caso de ser rotacao simples
-                rotateRR(no.pai.pai);
-            
-             //pai È um filho direito?
-            } else {
-            	//pega o tio
-                tio = no.pai.pai.esquerdo;
-              //Caso 02
+
+                // Caso 02
                 if (tio != nil && tio.cor == VERMELHO) {
                     no.pai.cor = PRETO;
                     tio.cor = PRETO;
@@ -134,30 +91,50 @@ public class ArvoreRB {
                     no = no.pai.pai;
                     continue;
                 }
-                
-                //nÛ È um filho ‡ esquerda (interno)?
+
+                // N√≥ √© um filho √† direita (interno)?
+                if (no == no.pai.direito) {
+                    no = no.pai;
+                    rotateLL(no);
+                }
+
+                no.pai.cor = PRETO;
+                no.pai.pai.cor = VERMELHO;
+
+                // Rota√ß√£o simples
+                rotateRR(no.pai.pai);
+            } else {
+                tio = no.pai.pai.esquerdo;
+
+                // Caso 02
+                if (tio != nil && tio.cor == VERMELHO) {
+                    no.pai.cor = PRETO;
+                    tio.cor = PRETO;
+                    no.pai.pai.cor = VERMELHO;
+                    no = no.pai.pai;
+                    continue;
+                }
+
+                // N√≥ √© um filho √† esquerda (interno)?
                 if (no == no.pai.esquerdo) {
-                	 //se precisar de rotacao dupla
                     no = no.pai;
                     rotateRR(no);
                 }
-                
+
                 no.pai.cor = PRETO;
                 no.pai.pai.cor = VERMELHO;
-                
-                //n„o È um nÛ ‡ direita (externo)
-                //executa somente essa caso de ser rotacao simples
+
+                // Rota√ß√£o simples
                 rotateLL(no.pai.pai);
             }
         }
-        
-        //recolore a raiz
+
+        // Recolore a raiz
         raiz.cor = PRETO;
     }
-    
-    
-    //rotacao ‡ esquerda
-    void rotateLL(RBNo no) {
+
+    // Rota√ß√£o √† esquerda
+    private void rotateLL(RBNo no) {
         if (no.pai != nil) {
             if (no == no.pai.esquerdo) {
                 no.pai.esquerdo = no.direito;
@@ -171,10 +148,8 @@ public class ArvoreRB {
             }
             no.direito = no.direito.esquerdo;
             no.pai.esquerdo = no;
-
-        //precisa rotacionar
         } else {
-        	RBNo direito = raiz.direito;
+            RBNo direito = raiz.direito;
             raiz.direito = direito.esquerdo;
             direito.esquerdo.pai = raiz;
             raiz.pai = direito;
@@ -183,9 +158,9 @@ public class ArvoreRB {
             raiz = direito;
         }
     }
-    
-    //rotacao ‡ direita
-    void rotateRR(RBNo no) {
+
+    // Rota√ß√£o √† direita
+    private void rotateRR(RBNo no) {
         if (no.pai != nil) {
             if (no == no.pai.esquerdo) {
                 no.pai.esquerdo = no.esquerdo;
@@ -200,11 +175,8 @@ public class ArvoreRB {
             }
             no.esquerdo = no.esquerdo.direito;
             no.pai.direito = no;
-        
-        //precisa rotacionar
         } else {
-        	
-        	RBNo esquerdo = raiz.esquerdo;
+            RBNo esquerdo = raiz.esquerdo;
             raiz.esquerdo = raiz.esquerdo.direito;
             esquerdo.direito.pai = raiz;
             raiz.pai = esquerdo;
@@ -214,32 +186,32 @@ public class ArvoreRB {
         }
     }
 
-    //Apagar ·rvore
-    void deleteArovore(){
+    // Apagar √°rvore
+    public void deleteArovore() {
         raiz = nil;
     }
-    
-    boolean deletar(RBNo z){
-    	
-        if((z = buscar(z, raiz))==null)
-        	return false;
+
+    public boolean deletar(RBNo z) {
+        z = buscar(z, raiz);
+        if (z == null) return false;
+
         RBNo x;
-        RBNo y = z; // temporary reference y
-        Cor y_original_color = y.cor;
-        
-        if(z.esquerdo == nil){
-            x = z.direito;  
-            transplant(z, z.direito);  
-        }else if(z.direito == nil){
+        RBNo y = z;
+        Cor yOriginalColor = y.cor;
+
+        if (z.esquerdo == nil) {
+            x = z.direito;
+            transplant(z, z.direito);
+        } else if (z.direito == nil) {
             x = z.esquerdo;
-            transplant(z, z.esquerdo); 
-        }else{
+            transplant(z, z.esquerdo);
+        } else {
             y = treeMinimum(z.direito);
-            y_original_color = y.cor;
+            yOriginalColor = y.cor;
             x = y.direito;
-            if(y.pai == z)
+            if (y.pai == z)
                 x.pai = y;
-            else{
+            else {
                 transplant(y, y.direito);
                 y.direito = z.direito;
                 y.direito.pai = y;
@@ -247,104 +219,98 @@ public class ArvoreRB {
             transplant(z, y);
             y.esquerdo = z.esquerdo;
             y.esquerdo.pai = y;
-            y.cor = z.cor; 
+            y.cor = z.cor;
         }
-        if(y_original_color==PRETO)
-            deleteFixup(x);  
+        if (yOriginalColor == PRETO) deleteFixup(x);
         return true;
     }
-    
-    
-    //auxiliar do delete
-    void transplant(RBNo no, RBNo no2){ 
-          if(no.pai == nil){
-              raiz = no2;
-          }else if(no == no.pai.esquerdo){
-              no.pai.esquerdo = no2;
-          }else
-              no.pai.direito = no2;
-          no2.pai = no.pai;
+
+    // Auxiliar do delete
+    private void transplant(RBNo no, RBNo no2) {
+        if (no.pai == nil) {
+            raiz = no2;
+        } else if (no == no.pai.esquerdo) {
+            no.pai.esquerdo = no2;
+        } else {
+            no.pai.direito = no2;
+        }
+        no2.pai = no.pai;
     }
-    
-    
-    
-    //auxiliar do delete
-    void deleteFixup(RBNo no){
-        while(no!=raiz && no.cor == PRETO){ 
-            if(no == no.pai.esquerdo){
-            	RBNo no2 = no.pai.direito;
-                if(no2.cor == VERMELHO){
+
+    // Auxiliar do delete
+    private void deleteFixup(RBNo no) {
+        while (no != raiz && no.cor == PRETO) {
+            if (no == no.pai.esquerdo) {
+                RBNo no2 = no.pai.direito;
+                if (no2.cor == VERMELHO) {
                     no2.cor = PRETO;
                     no.pai.cor = VERMELHO;
                     rotateLL(no.pai);
                     no2 = no.pai.direito;
                 }
-                if(no2.esquerdo.cor == PRETO && no2.direito.cor == PRETO){
+                if (no2.esquerdo.cor == PRETO && no2.direito.cor == PRETO) {
                     no2.cor = VERMELHO;
                     no = no.pai;
-                    continue;
+                } else {
+                    if (no2.direito.cor == PRETO) {
+                        no2.esquerdo.cor = PRETO;
+                        no2.cor = VERMELHO;
+                        rotateRR(no2);
+                        no2 = no.pai.direito;
+                    }
+                    if (no2.direito.cor == VERMELHO) {
+                        no2.cor = no.pai.cor;
+                        no.pai.cor = PRETO;
+                        no2.direito.cor = PRETO;
+                        rotateLL(no.pai);
+                        no = raiz;
+                    }
                 }
-                else if(no2.direito.cor == PRETO){
-                    no2.esquerdo.cor = PRETO;
-                    no2.cor = VERMELHO;
-                    rotateRR(no2);
-                    no2 = no.pai.direito;
-                }
-                if(no2.direito.cor == VERMELHO){
-                    no2.cor = no.pai.cor;
-                    no.pai.cor = PRETO;
-                    no2.direito.cor = PRETO;
-                    rotateLL(no.pai);
-                    no = raiz;
-                }
-            }else{
-            	RBNo no2 = no.pai.esquerdo;
-                if(no2.cor == VERMELHO){
+            } else {
+                RBNo no2 = no.pai.esquerdo;
+                if (no2.cor == VERMELHO) {
                     no2.cor = PRETO;
                     no.pai.cor = VERMELHO;
                     rotateRR(no.pai);
                     no2 = no.pai.esquerdo;
                 }
-                if(no2.direito.cor == PRETO && no2.esquerdo.cor == PRETO){
+                if (no2.direito.cor == PRETO && no2.esquerdo.cor == PRETO) {
                     no2.cor = VERMELHO;
                     no = no.pai;
-                    continue;
-                }
-                else if(no2.esquerdo.cor == PRETO){
-                    no2.direito.cor = PRETO;
-                    no2.cor = VERMELHO;
-                    rotateLL(no2);
-                    no2 = no.pai.esquerdo;
-                }
-                if(no2.esquerdo.cor == VERMELHO){
-                    no2.cor = no.pai.cor;
-                    no.pai.cor = PRETO;
-                    no2.esquerdo.cor = PRETO;
-                    rotateRR(no.pai);
-                    no = raiz;
+                } else {
+                    if (no2.esquerdo.cor == PRETO) {
+                        no2.direito.cor = PRETO;
+                        no2.cor = VERMELHO;
+                        rotateLL(no2);
+                        no2 = no.pai.esquerdo;
+                    }
+                    if (no2.esquerdo.cor == VERMELHO) {
+                        no2.cor = no.pai.cor;
+                        no.pai.cor = PRETO;
+                        no2.esquerdo.cor = PRETO;
+                        rotateRR(no.pai);
+                        no = raiz;
+                    }
                 }
             }
         }
-        no.cor = PRETO; 
+        no.cor = PRETO;
     }
-    
-    //auxiliar do delete
-    RBNo treeMinimum(RBNo raizSubArvore){
-        while(raizSubArvore.esquerdo!=nil){
+
+    // Auxiliar do delete
+    private RBNo treeMinimum(RBNo raizSubArvore) {
+        while (raizSubArvore.esquerdo != nil) {
             raizSubArvore = raizSubArvore.esquerdo;
         }
         return raizSubArvore;
     }
-    
-    
-    
+
     public void preorder(RBNo node) {
         if (node == nil) {
             return;
         }
-        System.out.print(((node.cor==VERMELHO)?"Cor: Vermelho ":"Cor: Preto")+" - valor: "+node.valor);
+        System.out.print(((node.cor == VERMELHO) ? "Cor: Vermelho " : "Cor: Preto ") + " - valor: " + node.valor);
         preorder(node.esquerdo);
         preorder(node.direito);
     }
-    
 }
